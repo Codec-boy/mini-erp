@@ -1,0 +1,198 @@
+// Prisma Schema for Mini ERP + CRM Operations Portal
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  SALES
+  WAREHOUSE
+  ACCOUNTS
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum CustomerType {
+  WHOLESALE
+  RETAIL
+  DISTRIBUTOR
+}
+
+enum ProductStatus {
+  ACTIVE
+  DISCONTINUED
+  OUT_OF_STOCK
+}
+
+enum MovementType {
+  INWARD_PURCHASE
+  OUTWARD_DISPATCH
+  ADJUSTMENT_ADD
+  ADJUSTMENT_SUBTRACT
+  RETURN
+}
+
+enum MovementRefType {
+  SALES_CHALLAN
+  PURCHASE_ORDER
+  MANUAL_ADJUSTMENT
+  STOCK_TAKE
+}
+
+enum ChallanStatus {
+  DRAFT
+  APPROVED
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(SALES)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  createdChallans    SalesChallan[]  @relation("ChallanCreator")
+  approvedChallans   SalesChallan[]  @relation("ChallanApprover")
+  dispatchedChallans SalesChallan[]  @relation("ChallanDispatcher")
+  deliveredChallans  SalesChallan[]  @relation("ChallanDeliverer")
+  stockMovements     StockMovement[]
+
+  @@map("users")
+}
+
+model Customer {
+  id                 String         @id @default(uuid())
+  code               String         @unique
+  companyName        String
+  contactPerson      String
+  email              String         @unique
+  phone              String
+  customerType       CustomerType   @default(WHOLESALE)
+  address            String
+  gstin              String?
+  creditLimit        Float          @default(0.0)
+  outstandingBalance Float          @default(0.0)
+  status             CustomerStatus @default(ACTIVE)
+  followUpDate       DateTime?
+  notes              String?
+  followUpNotes      String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  // Relations
+  salesChallans SalesChallan[]
+
+  @@map("customers")
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  sku         String        @unique
+  name        String
+  description String?
+  category    String
+  unit        String        @default("PCS") // e.g. PCS, KG, BOX, LTR
+  unitPrice   Float
+  costPrice   Float
+  status      ProductStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  stock          Stock?
+  stockMovements StockMovement[]
+  challanItems   SalesChallanItem[]
+
+  @@map("products")
+}
+
+model Stock {
+  id                   String   @id @default(uuid())
+  productId            String   @unique
+  currentQuantity      Int      @default(0)
+  minThresholdQuantity Int      @default(10)
+  reorderQuantity      Int      @default(50)
+  warehouseLocation    String?  @default("Main Warehouse - Section A")
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("stocks")
+}
+
+model StockMovement {
+  id            String          @id @default(uuid())
+  productId     String
+  type          MovementType
+  quantity      Int
+  referenceType MovementRefType @default(MANUAL_ADJUSTMENT)
+  referenceId   String?
+  reason        String?
+  createdById   String
+  createdAt     DateTime        @default(now())
+
+  // Relations
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@map("stock_movements")
+}
+
+model SalesChallan {
+  id            String        @id @default(uuid())
+  challanNumber String        @unique
+  customerId    String
+  status        ChallanStatus @default(DRAFT)
+  totalAmount   Float         @default(0.0)
+  notes         String?
+  createdById   String
+  approvedById  String?
+  dispatchedById String?
+  deliveredById String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  customer     Customer           @relation(fields: [customerId], references: [id])
+  createdBy    User               @relation("ChallanCreator", fields: [createdById], references: [id])
+  approvedBy   User?              @relation("ChallanApprover", fields: [approvedById], references: [id])
+  dispatchedBy User?              @relation("ChallanDispatcher", fields: [dispatchedById], references: [id])
+  deliveredBy  User?              @relation("ChallanDeliverer", fields: [deliveredById], references: [id])
+  items        SalesChallanItem[]
+
+  @@map("sales_challans")
+}
+
+model SalesChallanItem {
+  id          String  @id @default(uuid())
+  challanId   String
+  productId   String
+  productName String? // Product snapshot
+  productSku  String? // Product snapshot
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+
+  // Relations
+  challan SalesChallan @relation(fields: [challanId], references: [id], onDelete: Cascade)
+  product Product      @relation(fields: [productId], references: [id])
+
+  @@map("sales_challan_items")
+}

@@ -1,0 +1,96 @@
+{
+  "info": {
+    "name": "Mini ERP + CRM API Collection",
+    "description": "Postman Collection for Mini ERP + CRM Operations Portal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@minierp.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "http://localhost:5000/api/v1/auth/login", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "http://localhost:5000/api/v1/auth/me", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers (CRM)",
+      "item": [
+        {
+          "name": "List Customers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "http://localhost:5000/api/v1/customers?page=1&limit=10", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "customers"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] }
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CUST-9001\",\n  \"companyName\": \"Reliance Retail Logistics\",\n  \"contactPerson\": \"Karan Shah\",\n  \"email\": \"karan@relianceretail.com\",\n  \"phone\": \"+91 99887 66554\",\n  \"address\": \"Reliance Corporate Park, Navi Mumbai\",\n  \"creditLimit\": 1000000\n}"
+            },
+            "url": { "raw": "http://localhost:5000/api/v1/customers", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "customers"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products & Inventory",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "http://localhost:5000/api/v1/products?page=1&limit=10", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "products"] }
+          }
+        },
+        {
+          "name": "Inventory Summary Overview",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "http://localhost:5000/api/v1/inventory/overview", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "inventory", "overview"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sales Challans",
+      "item": [
+        {
+          "name": "List Sales Challans",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt_token}}" }],
+            "url": { "raw": "http://localhost:5000/api/v1/sales-challans", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "v1", "sales-challans"] }
+          }
+        }
+      ]
+    }
+  ]
+}

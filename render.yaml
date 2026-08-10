@@ -1,0 +1,29 @@
+# Render Infrastructure Blueprint Configuration for Mini ERP + CRM Operations Portal
+services:
+  # Main Full-Stack Web Service (Express Server serving React Client)
+  - type: web
+    name: mini-erp-crm-portal
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 24h
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mini-erp-db
+          property: connectionString
+
+# Render PostgreSQL Database Instance
+databases:
+  - name: mini-erp-db
+    databaseName: minierp_crm
+    user: mini_erp_user
+    plan: free
