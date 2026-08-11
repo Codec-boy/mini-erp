@@ -32,6 +32,10 @@ const DEMO_USERS: Record<string, { id: string; name: string; email: string; role
 
 export class AuthService {
   static async login(emailInput: string, passwordInput: string) {
+    if (!emailInput || !passwordInput) {
+      throw new UnauthorizedError('Email and password are required');
+    }
+
     const email = emailInput.toLowerCase().trim();
 
     try {
@@ -61,12 +65,12 @@ export class AuthService {
       }
     } catch (err: any) {
       if (err instanceof UnauthorizedError) throw err;
-      console.warn('⚠️ Database query failed, checking demo fallback accounts...', err.message || err);
+      console.warn('⚠️ Database query failed, checking demo fallback accounts...', err?.message || err);
     }
 
-    // Fallback for Demo Role Accounts when DB connection is offline
+    // Fallback for Demo Role Accounts when DB user is not yet created
     const demoUser = DEMO_USERS[email];
-    if (demoUser && (passwordInput === 'Password123!' || passwordInput.length >= 6)) {
+    if (demoUser && (passwordInput === 'Password123!' || (passwordInput && passwordInput.length >= 6))) {
       const payload: JwtPayload = {
         userId: demoUser.id,
         email: demoUser.email,
