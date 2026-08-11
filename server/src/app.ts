@@ -60,7 +60,7 @@ const staticPath = fs.existsSync(clientDistPath)
 
 if (staticPath) {
   app.use(express.static(staticPath));
-  app.get('*', (req, res, next) => {
+  app.get('/{*splat}', (req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
       return next();
     }
