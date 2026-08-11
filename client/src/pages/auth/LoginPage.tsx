@@ -22,7 +22,7 @@ export const LoginPage: React.FC = () => {
     } catch (err: any) {
       setError(
         err.response?.data?.error?.message ||
-        'Login failed. Could not reach backend server on port 5000.'
+        'Login failed. Could not reach backend server.'
       );
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ export const LoginPage: React.FC = () => {
     } catch (err: any) {
       setError(
         err.response?.data?.error?.message ||
-        'Quick login failed. Could not connect to backend server (port 5000).'
+        'Quick login failed. Could not connect to backend server.'
       );
     } finally {
       setLoading(false);

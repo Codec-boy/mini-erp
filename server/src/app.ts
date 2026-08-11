@@ -13,6 +13,7 @@ const app: Application = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'https://mini-erp-omega.vercel.app',
   envConfig.clientUrl,
   ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map((url) => url.trim()) : []),
 ].filter(Boolean);
