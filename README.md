@@ -4,6 +4,14 @@ A production-grade, full-stack **Mini ERP + CRM Operations Portal** built for wh
 
 ---
 
+## 🌐 Live Application Links
+
+- 🚀 **Live Frontend App (Vercel)**: [https://mini-erp-omega.vercel.app/](https://mini-erp-omega.vercel.app/)
+- ⚙️ **Live Backend API (Render)**: [https://mini-erp-zrna.onrender.com](https://mini-erp-zrna.onrender.com)
+- 🏥 **Backend Health Check**: [https://mini-erp-zrna.onrender.com/health](https://mini-erp-zrna.onrender.com/health)
+
+---
+
 ## 🌟 Key Features
 
 1. **Role-Based Access Control (RBAC)**:
