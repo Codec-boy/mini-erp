@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+let rawApiUrl = import.meta.env.VITE_API_URL;
+if (rawApiUrl && rawApiUrl.includes('mini-erp.onrender.com') && !rawApiUrl.includes('mini-erp-zrna.onrender.com')) {
+  rawApiUrl = rawApiUrl.replace('mini-erp.onrender.com', 'mini-erp-zrna.onrender.com');
+}
+
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
+  rawApiUrl ||
   (import.meta.env.DEV ? '/api/v1' : 'https://mini-erp-zrna.onrender.com/api/v1');
 
 export const axiosClient = axios.create({
